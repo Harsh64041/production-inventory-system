@@ -9,10 +9,10 @@ A **full-stack, containerized application** that manages, processes, and visuali
 
 ## 🔗 Live Links & Demo
 
-🌍 **Frontend (Live Web App):** [https://thunderous-marshmallow-1742f7.netlify.app](https://thunderous-marshmallow-1742f7.netlify.app)  
-⚙️ **Backend API (Swagger Docs):** [https://production-inventory-system.onrender.com/docs](https://production-inventory-system.onrender.com/docs)  
-🐳 **Docker Hub Image:** [https://hub.docker.com/r/harshhhhhhh/inventory-backend](https://hub.docker.com/r/harshhhhhhh/inventory-backend)  
 📂 **GitHub Repository:** [https://github.com/Harsh64041/production-inventory-system](https://github.com/Harsh64041/production-inventory-system)  
+🌍 **Frontend (Live Web App):** [https://thunderous-marshmallow-1742f7.netlify.app](https://thunderous-marshmallow-1742f7.netlify.app)  
+⚙️ **Backend API Hosted URL:** [https://production-inventory-system.onrender.com/docs](https://production-inventory-system.onrender.com/docs)  
+🐳 **Backend Docker Hub Image Link:** [https://hub.docker.com/r/harshhhhhhh/inventory-backend](https://hub.docker.com/r/harshhhhhhh/inventory-backend)  
 
 ---
 
@@ -65,20 +65,118 @@ This project demonstrates:
 │
 ├── 📁 frontend
 │   ├── 📁 public
-│   │   ├── favicon.ico
-│   │   ├── index.html
-│   │   ├── manifest.json
-│   │   └── robots.txt
-│   │
-│   ├── 📁 src
-│   │   ├── 📄 App.js
-│   │   ├── 📄 App.css
-│   │   └── 📄 index.js
+│   │    ├── index.html
+│   ├── 📁 src  
+│   │    ├── 📄 App.js
+│   │    ├── 📄 App.css
+│   │    └── 📄 index.js
 │   │
 │   ├── 📄 package.json
 │   ├── 📄 package-lock.json
 │   └── 📄 Dockerfile
-│
-├── 📄 docker-compose.yml
-├── 📄 README.md ⭐ (ROOT LEVEL – GitHub reads this)
+│   
+├── 📄 docker-compose.yml   
+├── 📄 README.md ⭐ (ROOT LEVEL – GitHub reads this) 
 └── 📄 .gitignore
+
+```
+---
+## 🛠️ Setup & Installation
+✅ Prerequisites
+Before setting up the project locally, make sure you have:
+- **Node.js (v16 or higher)**
+- **Python (v3.8 or higher)**
+- **PostgreSQL**
+- **Docker & Docker Desktop** 
+- **Git**
+
+### 🔽 Step 1: Clone the Repository**
+```sh
+git clone [https://github.com/Harsh64041/production-inventory-system.git](https://github.com/Harsh64041/production-inventory-system.git)
+cd production-inventory-system
+```
+
+### 📦 Step 2: Install Dependencies**
+- **Backend Dependencies**
+```sh
+cd Backend
+pip install -r requirements.txt
+```
+
+- **Frontend Dependencies**
+ ```sh
+cd ../frontend
+npm install
+```
+
+### 🛢️ Step 3: Set Up PostgreSQL Database**
+- **Log in to your local PostgreSQL (e.g., via pgAdmin or psql)**
+- **Create a new database with the following details:**
+     - Database Name: inventory_db
+- **Create a .env file inside the backend folder:**
+```sh
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/inventory_db
+```
+
+### ▶️ Step 4: Run the Application (Local Mode)**
+- **Start Backend Server**
+```sh
+cd backend
+uvicorn main:app --reload --host localhost --port 8000
+```
+
+- **Backend API & Docs will run at :**
+```sh
+http://localhost:8000/docs
+```
+
+- **Start Frontend Application :**
+```sh
+cd frontend
+npm start
+```
+
+- **Frontend will run at :**
+```sh
+http://localhost:3000
+```
+
+
+
+### 🐳 Step 5: Run the Application (Docker Mode)**
+
+- **If you prefer running the entire stack via containers:**
+```sh
+docker-compose up --build
+```
+
+
+---
+### **🔮 Future Enhancements**
+🚀 Advanced Authentication – Implement JWT-based login and Role-Based Access Control (RBAC) for admins vs. staff.
+
+🗺️ Automated Reports – Generate downloadable PDF and Excel reports for monthly inventory audits.
+
+📊 Real-Time Alert System – Email notifications and webhooks for low stock warnings using Celery and Redis.
+
+🔔 Barcode Integration – Add support for physical barcode scanning to easily intake and update inventory.
+
+☁️ Multi-Tenant Architecture – Allow multiple businesses to register and manage their own inventory silos on the same platform.
+
+---
+### **🤝 Contribution**
+- Fork the repository.
+- Create a feature branch (git checkout -b feature-branch).
+- Commit your changes (git commit -m "Add new feature").
+- Push to the branch (git push origin feature-branch).
+- Open a Pull Request.
+---
+
+### **📧 Contact & Support**
+For any queries or support, feel free to reach out:
+
+For any queries, reach out to:
+- 👤 Harsh Vardhan Sharma
+- 📩 Email: harshvardhans809@gmail.com
+- 🔗 LinkedIn: [Connect with me](https://www.linkedin.com/in/harshvardhan-sharma-246919297)
+- 🌍 GitHub: [Project Repository](https://github.com/Harsh64041/production-inventory-system)

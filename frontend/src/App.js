@@ -94,14 +94,32 @@ function App() {
 
   const addCustomer = async (e) => {
     e.preventDefault();
+
+    // --- NEW VALIDATION LOGIC ADDED HERE ---
+    const email = e.target.email.value;
+    const phone = e.target.phone.value;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showNotification("Please enter a valid email address!", "error");
+      return;
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      showNotification("Please enter a valid 10-digit phone number!", "error");
+      return;
+    }
+    // ---------------------------------------
+
     try {
       const res = await fetch(`${API_URL}/customers/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: e.target.name.value,
-          email: e.target.email.value,
-          phone: e.target.phone.value
+          email: email,
+          phone: phone
         })
       });
       if(res.ok) { 
@@ -145,7 +163,6 @@ function App() {
     }
   };
 
-  // UPDATED: Low stock threshold changed to 20
   const lowStockProducts = products.filter(p => p.stock < 20);
   const getProductName = (id) => products.find(p => p.id === id)?.name || "Unknown";
   const getCustomerName = (id) => customers.find(c => c.id === id)?.name || "Unknown";
@@ -172,7 +189,6 @@ function App() {
                   <p><strong>Name</strong> <span>{viewingItem.data.name}</span></p>
                   <p><strong>SKU/Code</strong> <span>{viewingItem.data.sku}</span></p>
                   <p><strong>Unit Price</strong> <span>${viewingItem.data.price.toFixed(2)}</span></p>
-                  {/* UPDATED: Badge color condition changed to 20 */}
                   <p><strong>Current Stock</strong> <span><span className={`badge ${viewingItem.data.stock < 20 ? 'badge-danger' : 'badge-success'}`}>{viewingItem.data.stock} units</span></span></p>
                 </>
               )}
@@ -311,7 +327,6 @@ function App() {
                       <td><strong>#{p.id}</strong></td>
                       <td>{p.name}</td><td>{p.sku}</td>
                       <td style={{fontWeight: '600'}}>${p.price.toFixed(2)}</td>
-                      {/* UPDATED: Badge color condition changed to 20 */}
                       <td><span className={`badge ${p.stock < 20 ? 'badge-danger' : 'badge-success'}`}>{p.stock}</span></td>
                       <td>
                         <button onClick={() => handleViewItem('products', 'product', p.id)} className="action-btn btn-info">View</button>
@@ -433,7 +448,6 @@ function App() {
                       <td>{p.sku}</td>
                       <td style={{fontWeight: '700'}}>{p.stock} units</td>
                       <td>
-                        {/* UPDATED: Status condition changed to 20 */}
                         {p.stock === 0 ? <span className="badge badge-danger">Out of Stock</span> :
                          p.stock < 20 ? <span className="badge badge-warning">Low Stock</span> :
                          <span className="badge badge-success">In Stock</span>}

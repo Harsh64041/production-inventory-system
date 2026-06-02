@@ -177,6 +177,6 @@ For any queries or support, feel free to reach out:
 
 For any queries, reach out to:
 - 👤 Harsh Vardhan Sharma
-- 📩 Email: harshvardhans809@gmail.com
+- 📩 Email: hs9733492@gmail.com
 - 🔗 LinkedIn: [Connect with me](https://www.linkedin.com/in/harshvardhan-sharma-246919297)
 - 🌍 GitHub: [Project Repository](https://github.com/Harsh64041/production-inventory-system)

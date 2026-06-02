@@ -14,6 +14,9 @@ A **full-stack, containerized application** that manages, processes, and visuali
 ⚙️ **Backend API Hosted URL:** [https://production-inventory-system.onrender.com/docs](https://production-inventory-system.onrender.com/docs)  
 🐳 **Backend Docker Hub Image Link:** [https://hub.docker.com/r/harshhhhhhh/inventory-backend](https://hub.docker.com/r/harshhhhhhh/inventory-backend)  
 
+> 💡 **Important Note Regarding the Backend API Link:**  
+> If you visit the base Backend API URL directly, you will see a `{"detail":"Not Found"}` JSON response. **This is expected behavior**, as the root endpoint (`/`) is intentionally left blank. To explore and test the API endpoints, please append `/docs` to the URL (or click the Backend link provided above) to access the interactive **FastAPI Swagger UI**.
+
 ---
 
 ## 📌 About The Project
@@ -24,11 +27,11 @@ A **full-stack, containerized application** that manages, processes, and visuali
 The application manages complex relationships between products, customers, and orders, applies strict Pydantic-based data validation,  
 and automatically updates inventory metrics upon order creation or cancellation.
 
-This project demonstrates:
-- Containerized microservices architecture
-- Strict business logic and backend data validation
-- Scalable REST APIs with Python
-- Interactive frontend UI and metric visualization
+**Key Technical Achievements in this Project:**
+- **Cloud-Ready Containerization:** Packaged with Docker for consistent, hassle-free deployments across any environment.
+- **Bulletproof Backend Logic:** Built with Python and FastAPI, utilizing Pydantic to enforce strict data validation and reliable business rules.
+- **Scalable REST APIs:** Designed a clean, structured, and fully documented API architecture ready for growth.
+- **Engaging User Experience:** Developed a responsive React dashboard that transforms raw data into clear, interactive visual metrics.
 
 ---
 

@@ -11,7 +11,7 @@ function App() {
   const [viewingItem, setViewingItem] = useState(null); 
   const [editingProduct, setEditingProduct] = useState(null);
   
-  // NEW: State for tracking timestamps
+  // State for tracking timestamps
   const [timestamps, setTimestamps] = useState({});
 
   const API_URL = 'https://production-inventory-system.onrender.com';
@@ -21,26 +21,23 @@ function App() {
     setTimeout(() => setNotification(null), 5000);
   };
 
-  // Load timestamps from local storage on mount
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('app_timestamps')) || {};
-    setTimestamps(saved);
-  }, []);
-
-  // Save new timestamp
-  const saveTimestamp = (type, id) => {
-    setTimestamps(prev => {
-      const key = `${type}-${id}`;
-      if (prev[key]) return prev; // If already exists, don't overwrite
-      
-      const newTime = new Date().toLocaleString('en-IN', { 
-        day: '2-digit', month: 'short', year: 'numeric', 
-        hour: '2-digit', minute: '2-digit', hour12: true 
-      });
-      const updated = { ...prev, [key]: newTime };
-      localStorage.setItem('app_timestamps', JSON.stringify(updated));
-      return updated;
+  // Naya aur fast Timestamp Sync Function
+  const syncTimestamps = (pData, cData, oData) => {
+    let saved = JSON.parse(localStorage.getItem('app_timestamps')) || {};
+    let isUpdated = false;
+    const now = new Date().toLocaleString('en-IN', { 
+      day: '2-digit', month: 'short', year: 'numeric', 
+      hour: '2-digit', minute: '2-digit', hour12: true 
     });
+
+    pData.forEach(p => { if (!saved[`product-${p.id}`]) { saved[`product-${p.id}`] = now; isUpdated = true; } });
+    cData.forEach(c => { if (!saved[`customer-${c.id}`]) { saved[`customer-${c.id}`] = now; isUpdated = true; } });
+    oData.forEach(o => { if (!saved[`order-${o.id}`]) { saved[`order-${o.id}`] = now; isUpdated = true; } });
+
+    if (isUpdated) {
+      localStorage.setItem('app_timestamps', JSON.stringify(saved));
+    }
+    setTimestamps(saved);
   };
 
   const fetchData = async () => {
@@ -55,12 +52,9 @@ function App() {
       setProducts(pData);
       setCustomers(cData);
       setOrders(oData);
-
-      // Track timestamps for fetched data
-      pData.forEach(p => saveTimestamp('product', p.id));
-      cData.forEach(c => saveTimestamp('customer', c.id));
-      oData.forEach(o => saveTimestamp('order', o.id));
-
+      
+      // Sync timestamps immediately after fetching data
+      syncTimestamps(pData, cData, oData);
     } catch (err) {
       showNotification("Database connection failed!", "error");
     }
@@ -97,7 +91,7 @@ function App() {
       });
       if(res.ok) { 
         showNotification("Product Added Successfully!"); 
-        fetchData(); e.target.reset(); 
+        await fetchData(); e.target.reset(); 
       } else { 
         const err = await res.json(); 
         showNotification(`Validation Error: ${err.detail}`, "error"); 
@@ -120,14 +114,15 @@ function App() {
       });
       if(res.ok) { 
         showNotification("Product Updated Successfully!"); 
-        // Update timestamp for update action
-        const key = `product-${editingProduct.id}`;
-        const newTime = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
-        const updatedTimes = { ...timestamps, [key]: newTime };
-        setTimestamps(updatedTimes);
-        localStorage.setItem('app_timestamps', JSON.stringify(updatedTimes));
         
-        setEditingProduct(null); fetchData(); 
+        // Edit karne par naya time update karna
+        const newTime = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+        const saved = JSON.parse(localStorage.getItem('app_timestamps')) || {};
+        saved[`product-${editingProduct.id}`] = newTime;
+        localStorage.setItem('app_timestamps', JSON.stringify(saved));
+        setTimestamps(saved);
+        
+        setEditingProduct(null); await fetchData(); 
       } else { 
         const err = await res.json(); showNotification(err.detail, "error"); 
       }
@@ -140,14 +135,10 @@ function App() {
     const phone = e.target.phone.value;
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      showNotification("Please enter a valid email address!", "error"); return;
-    }
+    if (!emailRegex.test(email)) { showNotification("Please enter a valid email address!", "error"); return; }
 
     const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(phone)) {
-      showNotification("Please enter a valid 10-digit phone number!", "error"); return;
-    }
+    if (!phoneRegex.test(phone)) { showNotification("Please enter a valid 10-digit phone number!", "error"); return; }
 
     try {
       const res = await fetch(`${API_URL}/customers/`, {
@@ -157,7 +148,7 @@ function App() {
       });
       if(res.ok) { 
         showNotification("Customer Added Successfully!"); 
-        fetchData(); e.target.reset(); 
+        await fetchData(); e.target.reset(); 
       } else { 
         const err = await res.json(); showNotification(`Validation Error: ${err.detail}`, "error"); 
       }
@@ -178,7 +169,7 @@ function App() {
       });
       if(res.ok) { 
         showNotification("Order created! Product stock reduced automatically."); 
-        fetchData(); e.target.reset(); 
+        await fetchData(); e.target.reset(); 
       } else { 
         const err = await res.json(); showNotification(`Order Failed: ${err.detail}`, "error"); 
       }
@@ -189,7 +180,7 @@ function App() {
     if(window.confirm(`Are you sure you want to delete this?`)) {
       await fetch(`${API_URL}/${type}/${id}`, { method: 'DELETE' });
       showNotification(`${type.toUpperCase()} item deleted successfully! (Stock restored if applicable)`);
-      fetchData(); setViewingItem(null);
+      await fetchData(); setViewingItem(null);
     }
   };
 
@@ -201,7 +192,7 @@ function App() {
   return (
     <div className="app-container">
       
-      {/* ANIMATED POPUP MODAL */}
+      {/* ANIMATED POPUP MODAL WITH TIMESTAMPS */}
       {viewingItem && (
         <div className="modal-overlay" onClick={() => setViewingItem(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -215,7 +206,7 @@ function App() {
               {viewingItem.type === 'product' && (
                 <>
                   <p><strong>System ID</strong> <span>#{viewingItem.data.id}</span></p>
-                  <p><strong>Time Added</strong> <span>{timestamps[`product-${viewingItem.data.id}`] || 'N/A'}</span></p>
+                  <p><strong>Last Updated</strong> <span>{timestamps[`product-${viewingItem.data.id}`] || 'N/A'}</span></p>
                   <p><strong>Name</strong> <span>{viewingItem.data.name}</span></p>
                   <p><strong>SKU/Code</strong> <span>{viewingItem.data.sku}</span></p>
                   <p><strong>Unit Price</strong> <span>${viewingItem.data.price.toFixed(2)}</span></p>
@@ -357,7 +348,7 @@ function App() {
                   {products.map(p => (
                     <tr key={p.id}>
                       <td><strong>#{p.id}</strong></td>
-                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`product-${p.id}`] || 'Processing...'}</td>
+                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`product-${p.id}`] || 'N/A'}</td>
                       <td>{p.name}</td><td>{p.sku}</td>
                       <td style={{fontWeight: '600'}}>${p.price.toFixed(2)}</td>
                       <td><span className={`badge ${p.stock < 20 ? 'badge-danger' : 'badge-success'}`}>{p.stock}</span></td>
@@ -396,7 +387,7 @@ function App() {
                   {customers.map(c => (
                     <tr key={c.id}>
                       <td><strong>#{c.id}</strong></td>
-                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`customer-${c.id}`] || 'Processing...'}</td>
+                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`customer-${c.id}`] || 'N/A'}</td>
                       <td>{c.name}</td><td>{c.email}</td><td>{c.phone}</td>
                       <td>
                         <button onClick={() => handleViewItem('customers', 'customer', c.id)} className="action-btn btn-info">View</button>
@@ -450,7 +441,7 @@ function App() {
                   {orders.map(o => (
                     <tr key={o.id}>
                       <td><strong>#{o.id}</strong></td>
-                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`order-${o.id}`] || 'Processing...'}</td>
+                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`order-${o.id}`] || 'N/A'}</td>
                       <td>{getCustomerName(o.customer_id)}</td>
                       <td>{getProductName(o.product_id)}</td>
                       <td>{o.quantity}</td>
@@ -467,7 +458,7 @@ function App() {
           </div>
         )}
 
-        {/* --- INVENTORY TRACKING --- */}
+        {/* --- INVENTORY TRACKING (Time Next to SKU) --- */}
         {activeTab === 'inventory' && (
           <div className="fade-in">
             <h3 className="section-title">Detailed Inventory Tracking</h3>
@@ -475,14 +466,23 @@ function App() {
             
             <div className="table-container">
               <table className="data-table">
-                <thead><tr><th>Product ID</th><th>Last Updated Time</th><th>Product Name</th><th>SKU / Code</th><th>Current Stock</th><th>Status</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>SKU / Code</th>
+                    <th>Last Updated Time</th> {/* <-- SKU ke baad time */}
+                    <th>Current Stock</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {products.map(p => (
                     <tr key={p.id}>
                       <td><strong>#{p.id}</strong></td>
-                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`product-${p.id}`] || 'Processing...'}</td>
                       <td>{p.name}</td>
                       <td>{p.sku}</td>
+                      <td style={{fontSize: '13px', color: '#666'}}>{timestamps[`product-${p.id}`] || 'N/A'}</td>
                       <td style={{fontWeight: '700'}}>{p.stock} units</td>
                       <td>
                         {p.stock === 0 ? <span className="badge badge-danger">Out of Stock</span> :

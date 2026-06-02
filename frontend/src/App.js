@@ -11,7 +11,7 @@ function App() {
   const [viewingItem, setViewingItem] = useState(null); 
   const [editingProduct, setEditingProduct] = useState(null);
 
-  const API_URL = 'http://localhost:8000';
+  const API_URL = 'https://production-inventory-system.onrender.com';
 
   const showNotification = (msg, type = 'success') => {
     setNotification({ message: msg, type });

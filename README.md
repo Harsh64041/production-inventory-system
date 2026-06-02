@@ -72,11 +72,11 @@ This project demonstrates:
 │   │    └── 📄 index.js
 │   │
 │   ├── 📄 package.json
-│   ├── 📄 package-lock.json
 │   └── 📄 Dockerfile
+│
 │   
 ├── 📄 docker-compose.yml   
-├── 📄 README.md ⭐ (ROOT LEVEL – GitHub reads this) 
+├── 📄 README.md
 └── 📄 .gitignore
 
 ```

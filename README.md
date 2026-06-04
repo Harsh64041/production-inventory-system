@@ -15,7 +15,7 @@ A **full-stack, containerized application** that manages, processes, and visuali
 🐳 **Backend Docker Hub Image Link:** [https://hub.docker.com/r/harshhhhhhh/inventory-backend](https://hub.docker.com/r/harshhhhhhh/inventory-backend)  
 
 > 💡 **Important Note Regarding the Backend API Link:**  
-> If you visit the base Backend API URL directly, you will see a `{"detail":"Not Found"}` JSON response. **This is expected behavior**, as the root endpoint (`/`) is intentionally left blank. To explore and test the API endpoints, please append `/docs` to the URL (or click the Backend link provided above) to access the interactive **FastAPI Swagger UI**.
+> If you visit the base Backend API URL directly, you will see a `{"detail":"Not Found"}` JSON response. **This is expected behavior**, as the root endpoint (`/`) is intentionally left blank. To explore and test the API endpoints, please append `/docs` to the URL (or click the Backend link provided above) to access the interactive **FastAPI UI**.
 
 ---
 
